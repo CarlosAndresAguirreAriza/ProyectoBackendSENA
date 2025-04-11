@@ -1,0 +1,3094 @@
+openapi: 3.0.3
+info:
+  title: API Pricut Documentation
+  version: 1.0.0
+  description: Welcome to the Pricut Platform API documentation. This guide provides
+    detailed information about all available endpoints, including the HTTP methods
+    they accept, the parameters they require, and the response formats they return.
+    This documentation is designed to be a useful reference for both backend developers
+    who maintain and extend the API and frontend developers who consume it in their
+    client applications. If you have any questions or encounter any issues, please
+    feel free to reach out to the development team.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /api/v1/auth/jwt/login/:
+    post:
+      operationId: jwt_login
+      description: |-
+        Handle POST requests for user authentication.
+
+        This method allows for the authentication of a user, it expects a POST
+        request with their credentials. Successful authentication will result in the
+        creation of the user access token if their credentials are valid, their
+        account is active, and they have the necessary permissions to perform this
+        action.
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JWTLoginRequest'
+            examples:
+              DataValid:
+                value:
+                  email: user1@email.com
+                  password: contraseña1234
+                summary: Valid data for the request.
+                description: |-
+                  Valid credentials for a user. The following validations will be applied:
+                  - **Email:** This field is required and must not exceed 40 characters.
+                  - **Password:** This field is required and must not exceed 20 characters.
+
+                  Fields other than those defined for this request are not allowed.
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JWTLoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JWTLoginRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  access_token:
+                    type: string
+              examples:
+                ResponseOk:
+                  value:
+                    access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExMDU0MzYyLCJpYXQiOjE3MTEwNDcxNjIsImp0aSI6IjY0MTE2YzgyYjhmMDQzOWJhNTJkZGZmMzgyNzQ2ZTIwIiwidXNlcl9pZCI6IjJhNmI0NTNiLWZhMmItNDMxOC05YzM1LWIwZTk2ZTg5NGI2MyJ9.gfhWpy5rYY6P3Xrg0usS6j1KhEvF1HqWMiU7AaFkp9A
+                  summary: User authenticated
+                  description: The user has been successfully authenticated and the
+                    access token is returned, with a duration of **180** minutes used
+                    to access protected API resources.
+          description: '**(OK)** Authenticated user.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      email:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 40 caracteres.
+                      password:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 20 caracteres.
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data are invalid, error message(s)
+            are returned for each field that did not pass the validations. Some messages
+            are in Spanish because they will be used in the frontend and visible to
+            the user.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                AuthenticationFailed:
+                  value:
+                    code: authentication_failed
+                    detail: Correo o contraseña incorrecta.
+                  summary: Credentials invalid
+                  description: This response is displayed when a user with the provided
+                    email is not found or the password is incorrect.
+                UserInactive:
+                  value:
+                    code: authentication_failed
+                    detail: The user account is inactive.
+                  summary: Inactive user account
+                  description: This response is displayed when the user trying to
+                    authenticate has an inactive account.
+          description: |-
+            **(UNAUTHORIZED)** The user you are trying to authenticate is not authorized, this is due to some of the following reasons.
+            - Invalid credentials.
+            - The user's account has not been activated.
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response appears when the user trying to authenticate
+                    does not have the permissions to do so with JSON Web Token.
+          description: '**(FORBIDDEN)** The user trying to authenticate does not have
+            the permissions to do so with JSON Web Token.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/auth/jwt/logout/:
+    post:
+      operationId: jwt_logout
+      description: |-
+        Handles POST requests for user logout.
+
+        This method allows to logout an authenticated user. Wait for a POST request
+        with the update token. A successful logout will consist of invalidating the
+        access token by adding them to the blacklist.
+      tags:
+      - Authentication
+      security:
+      - JWTAuth: []
+      responses:
+        '200':
+          description: '**(OK)** Successfully closed session.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request or the request cannot be completed.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to logout.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/auth/jwt/update/:
+    post:
+      operationId: jwt_update
+      description: |-
+        Handle POST requests for token refresh.
+
+        This method allows updating the JSON Web Tokens of an authenticated user,
+        waiting for a POST request with the access and update tokens. A successful
+        refresh will consist of creating new access token to keep the user
+        authenticated and invalidating the previous refresh token by adding it to
+        the blacklist.
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JWTUpdateRequest'
+            examples:
+              DataValid:
+                value:
+                  access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE1NjQ4MTAyLCJpYXQiOjE3MTU2NDA5MDIsImp0aSI6ImQ0YzEwYzEzMTgwODQ3YmNiNGU5NDMwMjFhYmQ3OGMyIiwidXNlcl91dWlkIjoiZDdiYTM0NzEtZWQzOS00NTQxLWFmOTktZWVmYzFjMWRlYmJkIiwicm9sZSI6IlNlYXJjaGVyVXNlciJ9.C5W1Q4XLBRXUbSUtKcESvudwo6-Ylg8u1fZZ4i79GWw
+                summary: Valid data for the request.
+                description: |-
+                  Valid data for the request. The following validations will be applied:
+                  - **Access token:** It is required, must be a valid token, must be expired and it should not exist on the blacklist.
+
+                  Fields other than those defined for this request are not allowed.
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JWTUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JWTUpdateRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+              examples:
+                ResponseOk:
+                  value:
+                    access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE1NjQ4MTAyLCJpYXQiOjE3MTU2NDA5MDIsImp0aSI6ImQ0YzEwYzEzMTgwODQ3YmNiNGU5NDMwMjFhYmQ3OGMyIiwidXNlcl91dWlkIjoiZDdiYTM0NzEtZWQzOS00NTQxLWFmOTktZWVmYzFjMWRlYmJkIiwicm9sZSI6IlNlYXJjaGVyVXNlciJ9.C5W1Q4XLBRXUbSUtKcESvudwo6-Ylg8u1fZZ4i79GWw
+                  summary: New access token generated
+                  description: The new access token have been generated successfully,
+                    you can use these new token to keep the user authenticated.
+          description: '**(OK)** New access token is generated.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      access_token:
+                      - This field is required.
+                      - This field may not be blank.
+                      - This field may not be null.
+                      - Not a valid string.
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data are invalid, error message(s)
+            are returned for each field that did not pass the validations.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                TokenNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The access token does not exist in the database.
+                  summary: JWT - Token not found
+                  description: The access token to be refreshed does not exist in
+                    the database.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/dashboard/static_info/cuts/:
+    get:
+      operationId: get_cut
+      description: |-
+        Handle GET requests to obtain cutting techniques information.
+
+        This method returns static information about cutting techniques. This
+        information is used to provide users with a reference of the available
+        options.
+      tags:
+      - Dashboard
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    base_info:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        code:
+                          type: string
+                    descriptions:
+                      type: object
+                      properties:
+                        main_text:
+                          type: string
+                        card_text:
+                          type: string
+                        about_text:
+                          type: string
+                        common_uses_text:
+                          type: string
+                    images:
+                      type: object
+                      properties:
+                        banner_image:
+                          type: string
+                          format: uri
+                        card_image:
+                          type: string
+                          format: uri
+                        main_image:
+                          type: string
+                          format: uri
+                        about_image:
+                          type: string
+                          format: uri
+                        uses_image:
+                          type: string
+                          format: uri
+              examples:
+                ResponseOk:
+                  value:
+                  - base_info:
+                      name: Router CNC
+                      code: router_cnc
+                    descriptions:
+                      about_text: Descripción de la técnica de corte.
+                      common_uses_text: Descripción de la tarjeta servicio.
+                      main_text: Acerca de la técnica de corte.
+                      card_text: Usos comunes de la técnica de corte.
+                    images:
+                      banner_image: https://image.png
+                      main_image: https://image.png
+                      card_image: https://image.png
+                      about_image: https://image.png
+                      uses_image: https://image.png
+                  - base_info:
+                      name: Láser de fibra
+                      code: laser_fibra
+                    descriptions:
+                      about_text: Descripción de la técnica de corte.
+                      common_uses_text: Descripción de la tarjeta servicio.
+                      main_text: Acerca de la técnica de corte.
+                      card_text: Usos comunes de la técnica de corte.
+                    images:
+                      banner_image: https://image.png
+                      main_image: https://image.png
+                      card_image: https://image.png
+                      about_image: https://image.png
+                      uses_image: https://image.png
+                  - base_info:
+                      name: Láser de CO2
+                      code: laser_co2
+                    descriptions:
+                      about_text: Descripción de la técnica de corte.
+                      common_uses_text: Descripción de la tarjeta servicio.
+                      main_text: Acerca de la técnica de corte.
+                      card_text: Usos comunes de la técnica de corte.
+                    images:
+                      banner_image: https://image.png
+                      main_image: https://image.png
+                      card_image: https://image.png
+                      about_image: https://image.png
+                      uses_image: https://image.png
+                  summary: Retrieve cutting technique information
+                  description: The information about the cutting technique available
+                    in the platform is returned.
+          description: '**(OK)** The requested information about the cutting technique
+            is returned.'
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                CutsNotFound:
+                  value:
+                    code: not_found
+                    detail: The requested cutting technique was not found in the database.
+                  summary: Cutting technique not found
+                  description: No cutting technique was found in the database.
+          description: '**(NOT_FOUND)** Some resources necessary for this process
+            were not found in the database.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+    post:
+      operationId: create_cut
+      description: |-
+        Handle POST requests to create a new cutting technique.
+
+        This method creates a new cutting technique based on the information
+        provided in the request, the new cutting technique is added to the database
+        and returned in the response. Only an authenticated user with the administrator
+        role and the necessary permissions has access to this functionality.
+      tags:
+      - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CutRequest'
+            examples:
+              DataValid:
+                value:
+                  name: Nombre del servicio
+                  about_text: Descripción del servicio.
+                  card_text: Descripción de la tarjeta servicio.
+                  common_uses_text: Usos comunes del servicio.
+                  main_text: Texto principal del servicio.
+                  banner_image: https://image.png
+                  card_image: https://image.png
+                  main_image: https://image.png
+                  about_image: https://image.png
+                  uses_image: https://image.png
+                summary: Cutting technique data
+                description: |-
+                  This is the data to create a new service. The following validations will be applied:
+                  - **Name:** This field is required, must not exceed 50 characters and cannot be in use.
+                  - **About text:** This field is required and must not exceed 500 characters.
+                  - **Card text:** This field is required and must not exceed 250 characters.
+                  - **Common uses text:** This field is required and must not exceed 500 characters.
+                  - **Main text:** This field is required and must not exceed 500 characters.
+                  - **Images:** must follow the format of a valid URL of maximum 2083 characters.
+
+                  Fields other than those defined for this request are not allowed.
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CutRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CutRequest'
+        required: true
+      security:
+      - JWTAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                properties:
+                  base_info:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      code:
+                        type: string
+                  descriptions:
+                    type: object
+                    properties:
+                      main_text:
+                        type: string
+                      card_text:
+                        type: string
+                      about_text:
+                        type: string
+                      common_uses_text:
+                        type: string
+                  images:
+                    type: object
+                    properties:
+                      banner_image:
+                        type: string
+                        format: uri
+                      card_image:
+                        type: string
+                        format: uri
+                      main_image:
+                        type: string
+                        format: uri
+                      about_image:
+                        type: string
+                        format: uri
+                      uses_image:
+                        type: string
+                        format: uri
+              examples:
+                CutCreated:
+                  value:
+                    base_info:
+                      name: Router CNC
+                      code: router_cnc
+                    descriptions:
+                      about_text: Descripción de la técnica de corte.
+                      common_uses_text: Descripción de la tarjeta servicio.
+                      main_text: Acerca de la técnica de corte.
+                      card_text: Usos comunes de la técnica de corte.
+                    images:
+                      banner_image: https://image.png
+                      main_image: https://image.png
+                      card_image: https://image.png
+                      about_image: https://image.png
+                      uses_image: https://image.png
+                  summary: Cutting technique created
+                  description: The cutting technique was created successfully.
+          description: '**(CREATED)** Cutting technique created successfully.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      name:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Ya existe un servicio con este nombre.
+                      - El valor ingresado no puede tener más de 50 caracteres.
+                      about_text:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 500 caracteres.
+                      card_text:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 250 caracteres.
+                      common_uses_text:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 500 caracteres.
+                      main_text:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 500 caracteres.
+                      banner_image:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - Introduzca una URL válida.
+                      - El valor ingresado no puede tener más de 2083 caracteres.
+                      card_image:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - Introduzca una URL válida.
+                      - El valor ingresado no puede tener más de 2083 caracteres.
+                      main_image:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - Introduzca una URL válida.
+                      - El valor ingresado no puede tener más de 2083 caracteres.
+                      about_image:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - Introduzca una URL válida.
+                      - El valor ingresado no puede tener más de 2083 caracteres.
+                      uses_image:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - Introduzca una URL válida.
+                      - El valor ingresado no puede tener más de 2083 caracteres.
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data is invalid; error messages
+            are returned for each field that failed validation. Some messages are
+            in Spanish because they will be used in the frontend and visible to the
+            user.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to create a cutting technique.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/dashboard/static_info/cuts/{cut_code}/base_info/:
+    patch:
+      operationId: update_cut_base_info
+      description: |-
+        Handle PATCH requests to update cutting technique base info.
+
+        This method updates an existing cutting technique based on the information
+        provided in the request, the updated cutting technique is returned in the
+        response. Only an authenticated user with the administrator role and the necessary
+        permissions has access to this functionality.
+      parameters:
+      - in: path
+        name: cut_code
+        schema:
+          type: string
+        description: The code of the cutting technique to be updated.
+        required: true
+      tags:
+      - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCutBaseInfoRequest'
+            examples:
+              DataValid:
+                value:
+                  name: Corte láser
+                summary: Thickness data
+                description: |-
+                  This is the data to create a new service. The following validations will be applied:
+                  - **Name:** This field is required, must not exceed 50 characters and cannot be in use.
+
+                  Fields other than those defined for this request are not allowed.
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCutBaseInfoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCutBaseInfoRequest'
+      security:
+      - JWTAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  name:
+                    type: string
+              examples:
+                CutUpdated:
+                  value:
+                    code: corte_laser
+                    name: Corte láser
+                  summary: Cutting technique updated
+                  description: The base information of the cutting technique has been
+                    updated successfully.
+          description: '**(OK)** The cutting technique has been updated successfully.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      name:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Ya existe un servicio con este nombre.
+                      - El valor ingresado no puede tener más de 50 caracteres.
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data is invalid; error messages
+            are returned for each field that failed validation. Some messages are
+            in Spanish because they will be used in the frontend and visible to the
+            user.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request or the request cannot be completed.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to update the cutting technique.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                CutNotFound:
+                  value:
+                    code: not_found
+                    detail: The requested cutting technique was not found in the database.
+                  summary: Cutting technique not found
+                  description: The cutting technique was not found in the database.
+          description: '**(NOT_FOUND)** Some resources necessary for this process
+            were not found in the database.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/dashboard/static_info/cuts/{cut_code}/change_status/:
+    post:
+      operationId: change_cut_status
+      description: |-
+        Handle POST requests to change the status of a cutting technique.
+
+        This method changes the state of a cutting technique depending on the function,
+        this state allows to control if the information of a cutting technique can be
+        displayed to the end user. Only an authenticated user with the administrator
+        role and the necessary permissions has access to this functionality.
+      parameters:
+      - in: path
+        name: cut_code
+        schema:
+          type: string
+        description: The code of the cutting technique to change the status.
+        required: true
+      tags:
+      - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CutStatusRequest'
+            examples:
+              DataValid:
+                value:
+                  status: false
+                summary: Request data
+                description: |-
+                  These are the data required to change the status of a cutting technique:
+                  - **Status:** This field is required.
+
+                  Fields other than those defined for this request are not allowed.
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CutStatusRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CutStatusRequest'
+        required: true
+      security:
+      - JWTAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  modified_thicknesses:
+                    type: boolean
+              examples:
+                StatusUpdated:
+                  value:
+                    modified_thicknesses: true
+                  summary: Status updated
+                  description: The status of the cutting technique was updated successfully.
+                    The **modified_thicknesses** field indicates whether the information
+                    for all materials cached in the browser needs to be updated.
+          description: '**(OK)** The status of the cutting technique was updated successfully.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      status:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data is invalid; error messages
+            are returned for each field that failed validation. Some messages are
+            in Spanish because they will be used in the frontend and visible to the
+            user.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+                StaticInfoError1:
+                  value:
+                    code: request_error
+                    detail: Select a different value for the status.
+                  summary: STATIC INFO - Invalid status value
+                  description: This response is returned when attempting to activate
+                    a cutting technique that is already active or deactivate a cutting
+                    technique that is already deactivated.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request or cannot be completed.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to change the status of a cutting technique.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                CutNotFound:
+                  value:
+                    code: not_found
+                    detail: The requested cutting technique was not found in the database.
+                  summary: Cutting technique not found
+                  description: The cutting technique with the specified code was not
+                    found in the database.
+          description: '**(NOT_FOUND)** Some resources necessary for this process
+            were not found in the database.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/dashboard/static_info/cuts/{cut_code}/descriptions/:
+    patch:
+      operationId: update_cut_descriptions
+      description: |-
+        Handle PATCH requests to update cutting technique descriptions.
+
+        This method updates an existing cutting technique based on the information
+        provided in the request, the updated cutting technique is returned in the
+        response. Only an authenticated user with the administrator role and the necessary
+        permissions has access to this functionality.
+      parameters:
+      - in: path
+        name: cut_code
+        schema:
+          type: string
+        description: The code of the cutting technique to be updated.
+        required: true
+      tags:
+      - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCutDescriptionRequest'
+            examples:
+              DataValid:
+                value:
+                  about_text: Descripción del servicio.
+                  card_text: Descripción de la tarjeta servicio.
+                  common_uses_text: Usos comunes del servicio.
+                  main_text: Texto principal del servicio.
+                summary: Thickness data
+                description: |-
+                  This is the data to update a cutting technique. The following validations will be applied:
+                  - **About text:** This field is required and must not exceed 500 characters.
+                  - **Card text:** This field is required and must not exceed 250 characters.
+                  - **Common uses text:** This field is required and must not exceed 500 characters.
+                  - **Main text:** This field is required and must not exceed 500 characters.
+
+                  Fields other than those defined for this request are not allowed.
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCutDescriptionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCutDescriptionRequest'
+      security:
+      - JWTAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  main_text:
+                    type: string
+                  card_text:
+                    type: string
+                  about_text:
+                    type: string
+                  common_uses_text:
+                    type: string
+              examples:
+                CutUpdated:
+                  value:
+                    about_text: Descripción de la técnica de corte.
+                    common_uses_text: Descripción de la tarjeta servicio.
+                    main_text: Acerca de la técnica de corte.
+                    card_text: Usos comunes de la técnica de corte.
+                  summary: Cutting technique updated
+                  description: The descriptions of the cutting technique have been
+                    updated successfully.
+          description: '**(OK)** The cutting technique has been updated successfully.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      about_text:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 500 caracteres.
+                      card_text:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 250 caracteres.
+                      common_uses_text:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 500 caracteres.
+                      main_text:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 500 caracteres.
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data is invalid; error messages
+            are returned for each field that failed validation. Some messages are
+            in Spanish because they will be used in the frontend and visible to the
+            user.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request or the request cannot be completed.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to update the cutting technique.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                CutNotFound:
+                  value:
+                    code: not_found
+                    detail: The requested cutting technique was not found in the database.
+                  summary: Cutting technique not found
+                  description: The cutting technique was not found in the database.
+          description: '**(NOT_FOUND)** Some resources necessary for this process
+            were not found in the database.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/dashboard/static_info/materials/:
+    get:
+      operationId: list_materials
+      description: |-
+        Handle GET requests to obtain information about all materials.
+
+        This method returns static information about materials, including available
+        thicknesses and their compatibility with different cutting techniques
+        respectively. This information is used to provide users with a reference of
+        the available options.
+      tags:
+      - Dashboard
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    base_info:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        name:
+                          type: string
+                        category:
+                          type: string
+                    descriptions:
+                      type: object
+                      properties:
+                        description_text:
+                          type: string
+                        about_text:
+                          type: string
+                        common_uses_text:
+                          type: string
+                        features_highlights:
+                          type: array
+                          items:
+                            type: object
+                    images:
+                      type: object
+                      properties:
+                        banner_image:
+                          type: string
+                          format: uri
+                        description_image:
+                          type: string
+                          format: uri
+                        about_image:
+                          type: string
+                          format: uri
+                        uses_image:
+                          type: string
+                          format: uri
+                        texture_image:
+                          type: string
+                          format: uri
+                    thicknesses:
+                      type: array
+                      items:
+                        type: object
+              examples:
+                ResponseOk:
+                  value:
+                  - base_info:
+                      name: Aluminio
+                      code: aluminio
+                      category: metales
+                    descriptions:
+                      description_text: Descripción del material.
+                      about_text: Acerca del material.
+                      common_uses_text: Usos comunes del material.
+                      features_highlights:
+                      - title: Titulo
+                        image: https://image.png
+                      - title: Titulo
+                        image: https://image.png
+                      - title: Titulo
+                        image: https://image.png
+                    images:
+                      banner_image: https://image.png
+                      description_image: https://image.png
+                      about_image: https://image.png
+                      uses_image: https://image.png
+                      texture_image: https://image.png
+                    thicknesses:
+                    - value: 1.5
+                      fiber_laser: true
+                      co2_laser: true
+                      router_cnc: false
+                    - value: 2.5
+                      fiber_laser: true
+                      co2_laser: true
+                      router_cnc: true
+                    - value: 3.5
+                      fiber_laser: true
+                      co2_laser: false
+                      router_cnc: false
+                  - base_info:
+                      name: Triplex
+                      code: triplex
+                      category: maderas
+                    descriptions:
+                      description_text: Descripción del material.
+                      about_text: Acerca del material.
+                      common_uses_text: Usos comunes del material.
+                      features_highlights:
+                      - title: Titulo
+                        image: https://image.png
+                      - title: Titulo
+                        image: https://image.png
+                      - title: Titulo
+                        image: https://image.png
+                    images:
+                      banner_image: https://image.png
+                      description_image: https://image.png
+                      about_image: https://image.png
+                      uses_image: https://image.png
+                      texture_image: https://image.png
+                    thicknesses:
+                    - value: 1.5
+                      fiber_laser: true
+                      co2_laser: true
+                      router_cnc: false
+                    - value: 2.5
+                      fiber_laser: true
+                      co2_laser: true
+                      router_cnc: true
+                    - value: 3.5
+                      fiber_laser: true
+                      co2_laser: false
+                      router_cnc: false
+                  summary: Retrieve static information
+                  description: The information about the materials available in the
+                    platform is returned.
+          description: '**(OK)** The organized information on the requested materials
+            is returned.'
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                MaterialsNotFound:
+                  value:
+                    code: not_found
+                    detail: The requested material was not found in the database.
+                  summary: Materials not found
+                  description: No existing materials were found in the database.
+          description: '**(NOT_FOUND)** Some resources necessary for this process
+            were not found in the database.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/dashboard/static_info/materials/{material_code}/change_status/:
+    post:
+      operationId: change_material_status
+      description: |-
+        Handle POST requests to change the status of a material.
+
+        This method changes the status of a material in the database. The new status
+        is provided in the request body, and only an authenticated user with the
+        administrator role and the necessary permissions has access to this functionality.
+      parameters:
+      - in: path
+        name: material_code
+        schema:
+          type: string
+        description: The code of the material to change the status.
+        required: true
+      tags:
+      - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialStatusRequest'
+            examples:
+              DataValid:
+                value:
+                  status: false
+                summary: Request data
+                description: |-
+                  These are the data required to change the status of a material:
+                  - **Status:** This field is required.
+
+                  Fields other than those defined for this request are not allowed.
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MaterialStatusRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MaterialStatusRequest'
+        required: true
+      security:
+      - JWTAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  modified_thicknesses:
+                    type: boolean
+              examples:
+                StatusUpdated:
+                  value:
+                    modified_thicknesses: true
+                  summary: Status updated
+                  description: The status of the material was updated successfully.
+                    The **modified_thicknesses** field indicates whether the information
+                    for all materials cached in the browser needs to be updated.
+          description: '**(OK)** The status of the material was updated successfully.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      status:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data is invalid, error messages
+            are returned for each field that failed validation. Some messages are
+            in Spanish because they will be used in the frontend and visible to the
+            user.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+                StaticInfoError1:
+                  value:
+                    code: request_error
+                    detail: Select a different value for the status.
+                  summary: STATIC INFO - Invalid status value
+                  description: This response is returned when attempting to activate
+                    a material that is already active or deactivate a material that
+                    is already deactivated.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request or the request cannot be completed.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to change the status of a material.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                MaterialNotFound:
+                  value:
+                    code: not_found
+                    detail: The requested material was not found in the database.
+                  summary: Material not found
+                  description: The material with the specified code was not found
+                    in the database.
+          description: '**(NOT_FOUND)** Some resources necessary for this process
+            were not found in the database.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/dashboard/static_info/materials/{material_code}/thickness/:
+    post:
+      operationId: add_thickness
+      description: |-
+        Handle POST requests to add a new thickness to a material.
+
+        This method adds a new thickness to a material in the database. The thickness
+        information is provided in the request body, and only an authenticated user with
+        the administrator role and the necessary permissions has access to this functionality.
+      parameters:
+      - in: path
+        name: material_code
+        schema:
+          type: string
+        description: The code of the material to which the new thickness is to be
+          added.
+        required: true
+      tags:
+      - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateThicknessRequest'
+            examples:
+              DataValid:
+                value:
+                  value: 6.5
+                  compatibility_cut:
+                    laser_fibra: true
+                    laser_co2: false
+                    router_cnc: false
+                summary: Thickness data
+                description: |-
+                  These are the data of a material that can be updated, the following validations will be applied to each data:
+                  - **Value:** This field is required and must be a decimal number with a maximum of 4 digits before the comma, up to 2 decimal places, a minimum value of 99.99 and a maximum value of 0.01.
+                  - **Compatibility cut:** This field is required, the cutting technique must exist in the database and at least one cutting technique must be defined as compatible with the thickness.
+
+                  Fields other than those defined for this request are not allowed.
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateThicknessRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateThicknessRequest'
+        required: true
+      security:
+      - JWTAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                properties:
+                  modified_thicknesses:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      value:
+                        type: decimal
+                      compatibility_cut:
+                        type: object
+                        properties:
+                          cut_code:
+                            type: boolean
+              examples:
+                AddThickness:
+                  value:
+                    modified_thicknesses: false
+                    data:
+                      id: 1
+                      value: 0.5
+                      compatibility_cut:
+                        laser_fibra: true
+                        laser_co2: false
+                        router_cnc: false
+                  summary: Thickness added
+                  description: The thickness was added successfully. The **modified_thicknesses**
+                    field indicates whether the information for all materials cached
+                    in the browser needs to be updated.
+          description: '**(OK)** Thickness was added successfully.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      value:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Asegúrese de que no haya más de 2 dígitos antes del punto
+                        decimal.
+                      - El valor ingresado no puede tener más de 4 dígitos.
+                      - El valor ingresado no puede tener más de 2 decimales.
+                      - El valor ingresado no puede ser mayor a 99.99.
+                      - El valor ingresado no puede ser menor a 0.01.
+                      compatibility_cut:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Debes agregar o seleccionar al menos un elemento.
+                      - Debe haber al menos una técnica de corte compatible, o puede
+                        considerar no agregar o eliminar este grosor del material.
+                      - Se esperaba un diccionario o JSON de elementos pero se obtuvo
+                        un dato de tipo (list).
+                      - El corte seleccionado no existe. (other_cut).
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                CompatibilityCutErrors:
+                  value:
+                    compatibility_cut:
+                      cut_code:
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                  summary: Compatibility cut errors
+                  description: These are the possible error messages for the compatibility
+                    cut field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data is invalid; error messages
+            are returned for each field that failed validation. Some messages are
+            in Spanish because they will be used in the frontend and visible to the
+            user.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+                StaticInfoError1:
+                  value:
+                    code: not_found
+                    detail: You cannot mark a cutting technique as thickness compatible
+                      if it is not active.
+                  summary: STATIC INFO - Cutting technique inactive
+                  description: This response is returned when the cutting technique
+                    is inactive.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request or the request cannot be completed.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to add a new thickness to a material or does not have
+                    the required role.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                MaterialNotFound:
+                  value:
+                    code: not_found
+                    detail: The requested material was not found in the database.
+                  summary: Material not found
+                  description: The material to which the thickness is to be added
+                    was not found in the database.
+          description: '**(NOT_FOUND)** Some resources necessary for this process
+            were not found in the database.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/dashboard/static_info/materials/thickness/{thickness_id}/:
+    patch:
+      operationId: update_thickness
+      description: |-
+        Handle PATCH requests to update material thickness information.
+
+        This method adds or updates a material thickness to the database. Thickness information
+        is provided in the request body and only an authenticated user with the administrator
+        role and the necessary permissions has access to this functionality.
+      parameters:
+      - in: path
+        name: thickness_id
+        schema:
+          type: integer
+        description: The identifier of the thickness to be updated.
+        required: true
+      tags:
+      - Dashboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateThicknessRequest'
+            examples:
+              DataValid:
+                value:
+                  id: 1
+                  value: 6.5
+                  compatibility_cut:
+                    laser_fibra: true
+                    laser_co2: false
+                    router_cnc: false
+                summary: Thickness data
+                description: |-
+                  These are the data of a material that can be updated, the following validations will be applied to each data:
+                  - **ID:** This field is required, should not be modified, this information is necessary to update the specific thickness of the material.
+                  - **Value:** This field is required and must be a decimal number with a maximum of 4 digits before the comma, up to 2 decimal places, a minimum value of 99.99 and a maximum value of 0.01.
+                  - **Compatibility cut:** This field is required, the cutting technique must exist in the database and at least one cutting technique must be defined as compatible with the thickness.
+
+                  Fields other than those defined for this request are not allowed.
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateThicknessRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUpdateThicknessRequest'
+      security:
+      - JWTAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  modified_thicknesses:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      value:
+                        type: decimal
+                      compatibility_cut:
+                        type: object
+                        properties:
+                          cut_code:
+                            type: boolean
+              examples:
+                UpdateThickness:
+                  value:
+                    modified_thicknesses: true
+                    data:
+                      id: 1
+                      value: 6.5
+                      compatibility_cut:
+                        laser_fibra: true
+                        laser_co2: false
+                        router_cnc: false
+                  summary: Thickness updated
+                  description: The thickness information was updated successfully.
+                    The **modified_thicknesses** field indicates whether the information
+                    for all materials cached in the browser needs to be updated.
+          description: '**(OK)** Thickness information was updated successfully, thickness
+            information is returned along with additional information.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      id:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      value:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Asegúrese de que no haya más de 2 dígitos antes del punto
+                        decimal.
+                      - El valor ingresado no puede tener más de 4 dígitos.
+                      - El valor ingresado no puede tener más de 2 decimales.
+                      - El valor ingresado no puede ser mayor a 99.99.
+                      - El valor ingresado no puede ser menor a 0.01.
+                      compatibility_cut:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Debes agregar o seleccionar al menos un elemento.
+                      - Debe haber al menos una técnica de corte compatible, o puede
+                        considerar no agregar o eliminar este grosor del material.
+                      - Se esperaba un diccionario o JSON de elementos pero se obtuvo
+                        un dato de tipo (list).
+                      - El corte seleccionado no existe. (other_cut).
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                CompatibilityCutErrors:
+                  value:
+                    compatibility_cut:
+                      cut_code:
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                  summary: Compatibility cut errors
+                  description: These are the possible error messages for the compatibility
+                    cut field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data is invalid, error messages
+            are returned for each field that failed validation. Some messages are
+            in Spanish because they will be used in the frontend and visible to the
+            user.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+                StaticInfoError1:
+                  value:
+                    code: static_info_error
+                    detail: This action is not allowed, you cannot add a new false
+                      cut compatibility.
+                  summary: STATIC INFO - Cutting compatibility values
+                  description: This response is returned when a new cut support is
+                    added with the value **false**.
+                StaticInfoError2:
+                  value:
+                    code: static_info_error
+                    detail: No changes were detected in the thickness data. Make sure
+                      to submit information that is different from the current one.
+                  summary: STATIC INFO - Changes not detected
+                  description: This response is returned when it is detected that
+                    the request data is equal to the original data existing in the
+                    database.
+                StaticInfoError3:
+                  value:
+                    code: static_info_error
+                    detail: This action is not allowed, you cannot remove cut-off
+                      compatibilities if they are still active.
+                  summary: STATIC INFO - Remove cut compatibility
+                  description: This response is returned when a cutting technique
+                    that is still active has been removed from the **compatibility_cut**
+                    section of the request data.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request or the request cannot be completed.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to update a thickness to a material or does not have
+                    the required role.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                ThicknessNotFound:
+                  value:
+                    code: not_found
+                    detail: The thickness of the material was not found in the database.
+                  summary: Thickness not found
+                  description: Thickness not found in the database.
+          description: '**(NOT_FOUND)** Some resources necessary for this process
+            were not found in the database.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+    delete:
+      operationId: delete_thickness
+      description: |-
+        Handle DELETE requests to remove a thickness from a material.
+
+        This method removes a thickness from a material in the database. The thickness
+        information is provided in the request body, and only an authenticated user with
+        the administrator role and the necessary permissions has access to this functionality
+        to remove a thickness.
+      parameters:
+      - in: path
+        name: thickness_id
+        schema:
+          type: integer
+        description: The identifier of the thickness to be deleted.
+        required: true
+      tags:
+      - Dashboard
+      security:
+      - JWTAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  modified_thicknesses:
+                    type: boolean
+              examples:
+                DeleteThickness:
+                  value:
+                    modified_thicknesses: true
+                  summary: Thickness deleted
+                  description: The thickness information was deleted successfully.
+                    The **modified_thicknesses** field indicates whether the information
+                    for all materials cached in the browser needs to be updated.
+          description: '**(OK)** The indicated thickness was removed from the database.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request or the request cannot be completed.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to delete a thickness from a material or does not have
+                    the required role.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                ThicknessNotFound:
+                  value:
+                    code: not_found
+                    detail: The thickness of the material was not found in the database.
+                  summary: Thickness not found
+                  description: Thickness not found in the database.
+          description: '**(NOT_FOUND)** Some resources necessary for this process
+            were not found in the database.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/user/company/:
+    post:
+      operationId: create_company
+      description: |-
+        Handle POST requests for company user registration.
+
+        This method allows you to register a new company user, waiting for a POST
+        request with the registration data. A successful registration will consist
+        of saving the user's information in the database and configuring the
+        permissions for their role.
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterCompanyRequest'
+            examples:
+              DataValid:
+                value:
+                  name: Compañia 1
+                  ruc: '1234567890123'
+                  phone_number: '+593991111111'
+                  address: Mi Compañia
+                  email: user1@email.com
+                  password: contraseña16545641
+                  confirm_password: contraseña16545641
+                summary: Register a new user with role company.
+                description: "A valid user registration data. The following validations\
+                  \ will be applied:\n- **Name:** This field is required, must not\
+                  \ exceed 40 characters, and must not be in use.\n- **Single Taxpayer\
+                  \ Registry (RUC):** This field is required, must be exactly 13 characters\
+                  \ long, and must not be in use.\n- **Address:** This field is required,\
+                  \ has a maximum of 40 characters, and must not be in use.\n- **Phone\
+                  \ number:** This field is required and must be a valid phone number\
+                  \ in E164 format, with a maximum of 19 characters, that is not in\
+                  \ use.\n- **Email:** This field is required and must not exceed\
+                  \ 40 characters, must follow standard email format, and must not\
+                  \ be in use.\n- **Password:** This field is required and must be\
+                  \ between 8 and 20 characters long, it must not be an easy-to-guess\
+                  \ password, and it cannot contain too much of the user's personal\
+                  \ information. It should not be a common password or contain only\
+                  \ numbers. \n- **Confirm password:** This field is required and\
+                  \ should match the password field.\n\nFields other than those defined\
+                  \ for this request are not allowed."
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterCompanyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterCompanyRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          description: '**(CREATED)** User created successfully.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      email:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Este correo electrónico ya está en uso.
+                      - El valor ingresado no puede tener más de 40 caracteres.
+                      password:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - La contraseña debe contener al menos una mayuscula o una minuscula.
+                      - La contraseña que ha elegido es demasiado común y fácil de
+                        adivinar.
+                      - El valor ingresado no puede tener más de 20 caracteres.
+                      - El valor ingresado debe tener al menos 8 caracteres.
+                      confirm_password:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - Las contraseñas no coinciden.
+                      name:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Esta nombre ya está en uso.
+                      - El valor ingresado no puede tener más de 40 caracteres.
+                      ruc:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Este número de identificación ya está en uso.
+                      - El valor ingresado no puede tener más de 13 caracteres.
+                      phone_number:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Este número de teléfono ya está en uso.
+                      - El valor ingresado no puede tener más de 19 caracteres.
+                      address:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - El valor ingresado no puede tener más de 40 caracteres.
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data is invalid; error messages
+            are returned for each field that failed validation. Some messages are
+            in Spanish because they will be used in the frontend and visible to the
+            user.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/user/natural_person/:
+    post:
+      operationId: create_natural_person
+      description: |-
+        Handle POST requests for natural person user registration.
+
+        This method allows you to register a new user with the 'natural person'
+        role, waiting for a POST request with the registration data. A successful
+        registration will consist of saving the user's information in the database
+        and assigning the permissions for their role.
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterNaturalPersonRequest'
+            examples:
+              DataValid:
+                value:
+                  first_name: Nombres del usuario
+                  last_name: Apellidos del usuario
+                  email: user1@email.com
+                  password: contraseña16545641
+                  confirm_password: contraseña16545641
+                summary: Register a new user with role naturalpersonrole.
+                description: "A valid user registration data. The following validations\
+                  \ will be applied:\n- **First name and last name:** These fields\
+                  \ are required; they must not exceed 25 characters, must contain\
+                  \ only letters and spaces, and must not be in use.\n- **Email:**\
+                  \ This field is required and must not exceed 40 characters, must\
+                  \ follow standard email format, and must not be in use.\n- **Password:**\
+                  \ This field is required and must be between 8 and 20 characters\
+                  \ long, it must not be an easy-to-guess password, and it cannot\
+                  \ contain too much of the user's personal information. It should\
+                  \ not be a common password or contain only numbers. \n- **Confirm\
+                  \ password:** This field is required and should match the password\
+                  \ field.\n\nFields other than those defined for this request are\
+                  \ not allowed."
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterNaturalPersonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterNaturalPersonRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          description: '**(CREATED)** User created successfully.'
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: object
+              examples:
+                InvalidData:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      email:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Este correo electrónico ya está en uso.
+                      - El valor ingresado no puede tener más de 40 caracteres.
+                      password:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - La contraseña debe contener al menos una mayuscula o una minuscula.
+                      - La contraseña que ha elegido es demasiado común y fácil de
+                        adivinar.
+                      - El valor ingresado no puede tener más de 20 caracteres.
+                      - El valor ingresado debe tener al menos 8 caracteres.
+                      confirm_password:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - Las contraseñas no coinciden.
+                      first_name:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Esta nombre ya está en uso.
+                      - El valor ingresado no puede tener más de 25 caracteres.
+                      last_name:
+                      - Este campo es requerido.
+                      - Este campo no puede estar en blanco.
+                      - Este campo no puede ser nulo.
+                      - El valor ingresado es inválido.
+                      - Este apellido ya está en uso.
+                      - El valor ingresado no puede tener más de 25 caracteres.
+                  summary: Invalid data
+                  description: These are the possible error messages for each field.
+                DataNotAllowed:
+                  value:
+                    code: invalid_request_data
+                    detail:
+                      invalid_field:
+                      - This field is not allowed.
+                  summary: Data not allowed
+                  description: The request data contains an invalid field.
+          description: '**(BAD_REQUEST)** The request data is invalid; error messages
+            are returned for each field that failed validation. Some messages are
+            in Spanish because they will be used in the frontend and visible to the
+            user.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+  /api/v1/user/natural_person/{user_uuid}/:
+    get:
+      operationId: get_natural_person
+      description: |-
+        Handle GET requests to obtain user information.
+
+        This method returns the information for the user account with the
+        'naturalperson' role associated with the request's access token, without
+        exposing sensitive data. The information is only provided if the user has
+        permission to read their own data and has the 'naturalperson' role.
+      parameters:
+      - in: path
+        name: user_uuid
+        schema:
+          type: string
+        required: true
+      tags:
+      - Users
+      security:
+      - JWTAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  base_data:
+                    type: object
+                  role_data:
+                    type: object
+              examples:
+                ResponseOk:
+                  value:
+                    base_data:
+                      email: user@email.com
+                    role_data:
+                      first_name: Nombre del usuario
+                      last_name: Apellido del usuario
+                      cc: null
+                      phone_number: null
+                      address: null
+                  summary: Get user data
+                  description: User information is displayed without showing sensitive
+                    data, it is possible that some of this data has a 'null' value.
+          description: '**(OK)** The requested user information is returned.'
+        '401':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                UserNotFound:
+                  value:
+                    code: jwt_error
+                    detail: The token user does not exist.
+                  summary: JWT - User not found
+                  description: The user associated to the access token does not exist
+                    in the database.
+                InvalidExpired:
+                  value:
+                    code: jwt_error
+                    detail: access token is invalid or expired.
+                  summary: JWT - Access token invalid or expired
+                  description: The access token is invalid or has expired.
+                TokenBlacklisted:
+                  value:
+                    code: jwt_error
+                    detail: access token is blacklisted.
+                  summary: JWT - Access token exists in the blacklist
+                  description: The access token exists in the blacklist.
+                AccessTokenNotProvided:
+                  value:
+                    code: jwt_error
+                    detail: Authentication credentials were not provided.
+                  summary: JWT - Access token not provided
+                  description: The access token was not provided in the request header.
+          description: '**(UNAUTHORIZED)** The JWT is not valid to continue with the
+            request or the request cannot be completed.'
+        '403':
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: string
+                  detail:
+                    type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    code: permission_denied
+                    detail: The user does not have permissions to perform this action.
+                  summary: Permission denied
+                  description: This response is displayed when the user does not have
+                    permission to read their own data.
+          description: '**(FORBIDDEN)** The user does not have permission to access
+            this resource.'
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    type: string
+                  code:
+                    type: string
+              examples:
+                DatabaseConnectionError:
+                  value:
+                    code: database_connection_error
+                    detail: Service unavailable. Please try again later.
+                  summary: Database connection error
+                  description: The connection to the database could not be established.
+          description: '**(INTERNAL_SERVER_ERROR)** An unexpected error occurred.'
+components:
+  schemas:
+    CreateThicknessRequest:
+      type: object
+      description: Defines the fields that are necessary to create a new thickness.
+      properties:
+        value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,2})?$
+        compatibility_cut:
+          type: object
+          additionalProperties:
+            type: boolean
+      required:
+      - compatibility_cut
+      - value
+    CutRequest:
+      type: object
+      description: Defines the data fields of a cutting technique.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        about_text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        card_text:
+          type: string
+          minLength: 1
+          maxLength: 250
+        common_uses_text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        main_text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        banner_image:
+          type: string
+          format: uri
+          minLength: 1
+          maxLength: 2083
+        card_image:
+          type: string
+          format: uri
+          minLength: 1
+          maxLength: 2083
+        main_image:
+          type: string
+          format: uri
+          minLength: 1
+          maxLength: 2083
+        about_image:
+          type: string
+          format: uri
+          minLength: 1
+          maxLength: 2083
+        uses_image:
+          type: string
+          format: uri
+          minLength: 1
+          maxLength: 2083
+      required:
+      - about_image
+      - about_text
+      - banner_image
+      - card_image
+      - card_text
+      - common_uses_text
+      - main_image
+      - main_text
+      - name
+      - uses_image
+    CutStatusRequest:
+      type: object
+      description: Serializer for the status of the static info.
+      properties:
+        status:
+          type: boolean
+      required:
+      - status
+    JWTLoginRequest:
+      type: object
+      description: |-
+        Handles the data for user authentication. Checks that the provided email and
+        password meet the necessary requirements.
+      properties:
+        email:
+          type: string
+          minLength: 1
+          maxLength: 40
+        password:
+          type: string
+          minLength: 1
+          maxLength: 20
+      required:
+      - email
+      - password
+    JWTUpdateRequest:
+      type: object
+      description: Handles data to update access token of a user.
+      properties:
+        access_token:
+          type: string
+          minLength: 1
+      required:
+      - access_token
+    MaterialStatusRequest:
+      type: object
+      description: Serializer for the status of the static info.
+      properties:
+        status:
+          type: boolean
+      required:
+      - status
+    PatchedCutBaseInfoRequest:
+      type: object
+      description: Defines the fields of the 'base info' section of a cutting technique.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+    PatchedCutDescriptionRequest:
+      type: object
+      description: Defines the fields of the 'descriptions' section of a cutting technique.
+      properties:
+        about_text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        card_text:
+          type: string
+          minLength: 1
+          maxLength: 250
+        common_uses_text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        main_text:
+          type: string
+          minLength: 1
+          maxLength: 500
+    PatchedUpdateThicknessRequest:
+      type: object
+      description: Defines the fields that are necessary to update the data of a thickness.
+      properties:
+        id:
+          type: integer
+        value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,2})?$
+        compatibility_cut:
+          type: object
+          additionalProperties:
+            type: boolean
+    RegisterCompanyRequest:
+      type: object
+      description: Defines the fields that are required for the company user registration.
+      properties:
+        email:
+          type: string
+          minLength: 1
+          pattern: ^([A-Za-z0-9]+[-_.])*[A-Za-z0-9]+@[A-Za-z]+(\.[A-Z|a-z]{2,4}){1,2}$
+          maxLength: 40
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+          maxLength: 20
+        confirm_password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 40
+        ruc:
+          type: string
+          minLength: 13
+          pattern: ^\d+$
+          maxLength: 13
+        phone_number:
+          type: string
+          minLength: 1
+          maxLength: 19
+        address:
+          type: string
+          minLength: 1
+          maxLength: 40
+      required:
+      - address
+      - confirm_password
+      - email
+      - name
+      - password
+      - phone_number
+      - ruc
+    RegisterNaturalPersonRequest:
+      type: object
+      description: |-
+        Define the mandatory fields for the registration of a natural person, requesting
+        only the minimum information necessary to complete the registration process.
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          pattern: ^[A-Za-z\u00f1\u00d1\u00e1\u00e9\u00ed\u00f3\u00fa\u00c1\u00c9\u00cd\u00d3\u00da\s]+$
+          maxLength: 25
+        last_name:
+          type: string
+          minLength: 1
+          pattern: ^[A-Za-z\u00f1\u00d1\u00e1\u00e9\u00ed\u00f3\u00fa\u00c1\u00c9\u00cd\u00d3\u00da\s]+$
+          maxLength: 25
+        email:
+          type: string
+          minLength: 1
+          pattern: ^([A-Za-z0-9]+[-_.])*[A-Za-z0-9]+@[A-Za-z]+(\.[A-Z|a-z]{2,4}){1,2}$
+          maxLength: 40
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+          maxLength: 20
+        confirm_password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - confirm_password
+      - email
+      - first_name
+      - last_name
+      - password
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |-
+        To use endpoints that employ **JSON Web Token** as an authentication tool, you must enter the access token you obtained when using the endpoint (`POST api/v1/user/jwt/login/`).
+
+        **Example:**
+
+        <access_token>
+servers:
+- url: http://172.26.221.236:8000
+  description: Development server
+tags:
+- name: Users
+  description: Includes all the endpoints that manage all the functionality related
+    to a user in the API.
+- name: Authentication
+  description: Includes all endpoints that manage all functionality related to authenticating
+    a user in the API.
+- name: Dashboard
+  description: Includes all endpoints that manage all functionality related to the
+    dashboard in the API.

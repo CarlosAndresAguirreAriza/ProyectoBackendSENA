@@ -1,0 +1,14 @@
+{
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "black-formatter.args": [
+            "--line-length", "84",
+            "--target-version", "py312",
+            "--include", "../api_pricut/*.py?",
+            "--check",
+            "--diff",
+            "../api_pricut"
+        ],
+        "editor.formatOnSave": true
+    }
+}

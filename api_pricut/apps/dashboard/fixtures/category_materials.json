@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Maderas",
+        "code": "maderas",
+        "description_text": "La madera es un material natural y versátil obtenido de los troncos de los árboles, ampliamente valorado en construcción, carpintería, diseño de interiores y decoración. Su belleza y durabilidad, combinadas con una gran variedad de tonalidades, texturas y patrones únicos, la convierten en una opción estética y funcional para crear espacios cálidos y acogedores. "
+    },
+    {
+        "name": "Metales",
+        "code": "metales",
+        "description_text": "Los metales son materiales robustos y duraderos que ofrecen una amplia gama de aplicaciones para cortes computarizados en sectores como la construcción, la fabricación de maquinaria, y el diseño decorativo. Gracias a su resistencia, precisión y acabado, los metales son una opción ideal para crear piezas complejas."
+    },
+    {
+        "name": "Compuestos",
+        "code": "compuestos",
+        "description_text": "Los materiales compuestos son aquellos fabricados a partir de la combinación de dos o más materiales distintos, que al unirse ofrecen propiedades superiores en términos de resistencia, ligereza y durabilidad. Estos materiales están diseñados para aprovechar las ventajas de cada componente, creando productos que son tanto funcionales como estéticamente atractivos."
+    },
+    {
+        "name": "Plásticos",
+        "code": "plasticos",
+        "description_text": "El plástico es un material versátil y duradero que se adapta a una amplia variedad de aplicaciones gracias a su ligereza, resistencia a la humedad y facilidad para ser moldeado y cortado. Los plásticos son populares en la industria de la fabricación digital porque permiten obtener piezas de alta precisión para proyectos de diseño, construcción, señalización y decoración."
+    }
+]

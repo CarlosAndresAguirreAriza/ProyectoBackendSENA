@@ -1,0 +1,776 @@
+[
+    {
+        "name": "MDF",
+        "code": "mdf",
+        "category_code": "maderas",
+        "thickness_cutting": [
+            {
+                "id": 1,
+                "value": "3.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 2,
+                "value": "4.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 3,
+                "value": "5.50",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 4,
+                "value": "9.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 5,
+                "value": "12.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 6,
+                "value": "15.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 7,
+                "value": "18.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 8,
+                "value": "25.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 9,
+                "value": "30.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 10,
+                "value": "36.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            }
+        ],
+        "description_text": "El MDF es un material ampliamente utilizado en la industria debido a su versatilidad y resistencia. Este tipo de tablero de fibra de densidad media se fabrica mediante la compresión de fibras de madera y resinas, lo que le confiere una estructura uniforme y una superficie lisa y homogénea.",
+        "about_text": "El MDF es conocido por su uniformidad y estabilidad dimensional, lo que lo hace ideal para aplicaciones donde se requiere un material consistente y fácil de trabajar. Además, el MDF es fácilmente moldeable y puede ser cortado, taladrado y fresado con facilidad, lo que lo convierte en un material popular en la industria.",
+        "common_uses_text": "El MDF se utiliza en una amplia gama de aplicaciones en la industria del mobiliario y la decoración. Se utiliza comúnmente en la fabricación de muebles, estanterías, armarios y puertas debido a su resistencia y facilidad de manipulación. Además, el MDF se utiliza en la fabricación de elementos decorativos, como molduras, marcos de cuadros y paneles decorativos, debido a su capacidad para ser pintado y decorado.",
+        "banner_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/z4oywnnmn8tg6yzau6xr",
+        "description_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/z4oywnnmn8tg6yzau6xr",
+        "about_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/d39nalqb9lrogplralp6",
+        "uses_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/oxe2cvofzupq8yxxdvbe",
+        "texture_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/t0aj7mxthkah3z9qjs5j",
+        "features_highlights": [
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            }
+        ]
+    },
+    {
+        "name": "Triplex",
+        "code": "triplex",
+        "category_code": "maderas",
+        "thickness_cutting": [
+            {
+                "id": 11,
+                "value": "3.60",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 12,
+                "value": "5.20",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 13,
+                "value": "9.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 14,
+                "value": "12.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 15,
+                "value": "15.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 16,
+                "value": "18.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            }
+        ],
+        "description_text": "También conocido como contrachapado o plywood, es un material ampliamente utilizado en la industria de la construcción debido a su resistencia y durabilidad. Este material se compone de varias capas de madera contrachapada pegadas entre sí, lo que le confiere una gran resistencia y estabilidad dimensional.",
+        "about_text": "Se caracteriza por su estructura de varias capas de madera, lo que le otorga una resistencia y durabilidad superiores a la de la madera sólida. Además, el triplex es fácil de trabajar y puede ser cortado, taladrado y fijado con facilidad, lo que lo convierte en un material popular en la industria de la construcción.",
+        "common_uses_text": "El triplex se utiliza en una amplia gama de aplicaciones en la construcción y la carpintería. Se utiliza comúnmente en la fabricación de muebles, puertas, ventanas y revestimientos debido a su resistencia y estabilidad dimensional. Además, el triplex se utiliza en la construcción de estructuras como techos, paredes y suelos debido a su resistencia y durabilidad.",
+        "banner_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/lswxa8f7pvzeg9vbv3wf",
+        "description_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/lswxa8f7pvzeg9vbv3wf",
+        "about_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/y2tlpbvfzcsenwha00kk",
+        "uses_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/hw340jbg3n3rvxasy8ta",
+        "texture_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/i1igutvya5yotedsqbn3",
+        "features_highlights": [
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            }
+        ]
+    },
+    {
+        "name": "Tol negro",
+        "code": "tol_negro",
+        "category_code": "metales",
+        "thickness_cutting": [
+            {
+                "id": 17,
+                "value": "0.50",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 18,
+                "value": "0.70",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 19,
+                "value": "0.90",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 20,
+                "value": "1.10",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 21,
+                "value": "2.00",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 22,
+                "value": "2.80",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 23,
+                "value": "3.00",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 24,
+                "value": "4.00",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 25,
+                "value": "4.80",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 26,
+                "value": "5.80",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 27,
+                "value": "6.00",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            }
+        ],
+        "description_text": "El acero tol negro laminado al frío es un material ampliamente utilizado en diversas aplicaciones industriales debido a su resistencia y durabilidad. Este tipo de acero se caracteriza por su superficie lisa y uniforme, resultado del proceso de laminado en frío. Se utiliza principalmente en la fabricación de muebles metálicos, puertas, carpintería metálica y baldes para camionetas.",
+        "about_text": "El acero tol negro laminado al frío es un material ampliamente utilizado en diversas aplicaciones industriales debido a su resistencia y durabilidad. Este tipo de acero se caracteriza por su superficie lisa y uniforme, resultado del proceso de laminado en frío. Se utiliza principalmente en la fabricación de muebles metálicos, puertas, carpintería metálica y baldes para camionetas.",
+        "common_uses_text": "El acero tol negro laminado al frío es un material muy versátil que se utiliza en una amplia variedad de aplicaciones industriales. Su resistencia y durabilidad lo hacen ideal para la fabricación de muebles metálicos, puertas, carpintería metálica, señalética y otras aplicaciones que requieren resistencia y durabilidad. Su capacidad para soportar cargas pesadas y resistir el desgaste lo convierte en una opción popular para aplicaciones donde se requiere un material duradero.",
+        "banner_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/fzyarjdhmffschf2e4zc",
+        "description_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/fzyarjdhmffschf2e4zc",
+        "about_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/p2othiqvx2gun3e0qtez",
+        "uses_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/ycxmezdkninemq6dukjx",
+        "texture_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/muimmonffrocnod5d1eu",
+        "features_highlights": [
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            }
+        ]
+    },
+    {
+        "name": "Tol Galvanizado",
+        "code": "tol_galvanizado",
+        "category_code": "metales",
+        "thickness_cutting": [
+            {
+                "id": 28,
+                "value": "0.45",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 29,
+                "value": "0.7",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 30,
+                "value": "0.9",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 31,
+                "value": "1.1",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 32,
+                "value": "1.4",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            }
+        ],
+        "description_text": "El tol galvanizado es un material ampliamente utilizado en diversas aplicaciones industriales debido a sus propiedades únicas. Este tipo de acero se caracteriza por estar recubierto con una capa de zinc, lo que le otorga una mayor resistencia a la corrosión y una mayor durabilidad en comparación con el acero común.",
+        "about_text": "Se obtiene mediante un proceso de galvanización en el que se sumerge el acero en zinc fundido. Este proceso crea una capa protectora sobre la superficie del acero, lo que lo hace más resistente a la corrosión y a los daños causados por el ambiente. Esta capa también proporciona una mayor durabilidad y resistencia a la abrasión, lo que lo hace ideal para aplicaciones que requieren un material resistente y duradero.",
+        "common_uses_text": "El acero tol galvanizado se utiliza en una amplia variedad de aplicaciones industriales. Se utiliza comúnmente en la fabricación de estructuras metálicas, señalética, conductos, techos y revestimientos para edificios. Su resistencia a la corrosión lo hace ideal para aplicaciones en exteriores donde el material está expuesto a la intemperie. Además, su capacidad para soportar cargas pesadas lo hace ideal para aplicaciones que requieren un material resistente y duradero.",
+        "banner_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/kum7nko71nhrfxebkhmd",
+        "description_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/kum7nko71nhrfxebkhmd",
+        "about_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/bgyzcryu9f9phe3eierl",
+        "uses_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/ucvrejspum3rgkklb2ia",
+        "texture_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/qc1upj3mgmunzuuottat",
+        "features_highlights": [
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            }
+        ]
+    },
+    {
+        "name": "Acero Inoxidable",
+        "code": "acero_inoxidable",
+        "category_code": "metales",
+        "thickness_cutting": [
+            {
+                "id": 33,
+                "value": "0.40",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 34,
+                "value": "1.5",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            },
+            {
+                "id": 35,
+                "value": "3.0",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": false
+                }
+            }
+        ],
+        "description_text": "El acero inoxidable es un material ampliamente utilizado en diversas aplicaciones industriales y domésticas debido a sus propiedades únicas. Este tipo de acero se caracteriza por su alta resistencia a la corrosión, lo que lo hace ideal para entornos donde otros metales se corroen fácilmente.",
+        "about_text": "El acero inoxidable se caracteriza por su capacidad para resistir la corrosión, el óxido y las manchas, lo que lo convierte en una opción ideal para entornos exigentes. Además de su resistencia a la corrosión, el acero inoxidable es conocido por su resistencia a las altas temperaturas, su facilidad de limpieza y su aspecto estético, lo que lo hace popular en una amplia variedad de aplicaciones.",
+        "common_uses_text": "El acero inoxidable se utiliza en una amplia variedad de aplicaciones, desde la fabricación de equipos médicos y quirúrgicos hasta la elaboración de utensilios de cocina y electrodomésticos. En la industria de la construcción, se utiliza en la fabricación de estructuras arquitectónicas y revestimientos exteriores debido a su resistencia a la corrosión y su aspecto estético. También se utiliza en la industria automotriz en la fabricación de piezas y componentes que requieren resistencia y durabilidad.",
+        "banner_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/ducuun3polp76mhlr0kt",
+        "description_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/ducuun3polp76mhlr0kt",
+        "about_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/duflifo4y62prmjiaeer",
+        "uses_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/jqvmukxnkwmonl10mhcd",
+        "texture_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/yg7xhgvq54zfxuh9heih",
+        "features_highlights": [
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            }
+        ]
+    },
+    {
+        "name": "ACM",
+        "code": "acm",
+        "category_code": "compuestos",
+        "thickness_cutting": [
+            {
+                "id": 36,
+                "value": "3.00",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 37,
+                "value": "4.00",
+                "compatibility_cut": {
+                    "laser_fibra": true,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            }
+        ],
+        "description_text": "Es un material innovador ampliamente utilizado en la construcción moderna debido a su ligereza, resistencia y versatilidad. Este material está compuesto por dos láminas de aluminio unidas por un núcleo de polietileno, lo que le confiere una gran resistencia estructural y una superficie lisa y homogénea.",
+        "about_text": "El ACM es conocido por su ligereza y resistencia, lo que lo convierte en un material ideal para aplicaciones donde se requiere un material resistente pero ligero. Además, el ACM es fácil de trabajar y puede ser cortado, doblado y moldeado con facilidad, lo que lo convierte en un material popular en la industria de la construcción.",
+        "common_uses_text": "El ACM se utiliza en una amplia gama de aplicaciones en la arquitectura y el diseño. Se utiliza comúnmente en la fabricación de revestimientos de fachadas, rótulos publicitarios, carteles y elementos decorativos debido a su resistencia y versatilidad. Además, el ACM se utiliza en la fabricación de elementos estructurales, como paneles de pared y techos, debido a su resistencia y durabilidad.",
+        "banner_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/ywgfh96lxi2t9gbrnpsz",
+        "description_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/ywgfh96lxi2t9gbrnpsz",
+        "about_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/i4qukjsnrgo4pbeilfwd",
+        "uses_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/cgm3b7bigxf5m5donpjn",
+        "texture_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/taecyfdkuvs0ctmcjyrf",
+        "features_highlights": [
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            }
+        ]
+    },
+    {
+        "name": "PVC",
+        "code": "pvc",
+        "category_code": "plasticos",
+        "thickness_cutting": [
+            {
+                "id": 38,
+                "value": "2.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 39,
+                "value": "3.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 40,
+                "value": "4.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 41,
+                "value": "5.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 42,
+                "value": "6.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 43,
+                "value": "9.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 44,
+                "value": "12.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": false,
+                    "router_cnc": true
+                }
+            }
+        ],
+        "description_text": "Es un material ampliamente utilizado en la industria del plástico debido a su versatilidad y durabilidad. Este material termoplástico se caracteriza por su resistencia a la corrosión, su bajo coste y su facilidad de procesamiento, lo que lo convierte en una opción popular en una variedad de aplicaciones.",
+        "about_text": "El PVC se produce mediante la polimerización del cloruro de vinilo, lo que crea un material resistente y duradero. El PVC puede ser fabricado en una variedad de formas y colores, lo que lo hace adecuado para una amplia gama de aplicaciones. Además, el PVC es resistente a la humedad, los productos químicos y la abrasión, lo que lo convierte en un material ideal para entornos exigentes.",
+        "common_uses_text": "El PVC se utiliza en una amplia gama de aplicaciones en diversas industrias. Se utiliza comúnmente en la fabricación de tuberías, perfiles, revestimientos, paneles y láminas debido a su resistencia y durabilidad. Además, el PVC se utiliza en la fabricación de señalética, envases, juguetes, muebles y productos médicos debido a su versatilidad y facilidad de procesamiento.",
+        "banner_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/sedpheyhxlctfj4uwxcb",
+        "description_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/sedpheyhxlctfj4uwxcb",
+        "about_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/cn3pls5vgrc8oei86my3",
+        "uses_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/bubu4dxb5uqzrjavzcgk",
+        "texture_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/awtonq84tj3pqzcatmer",
+        "features_highlights": [
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            }
+        ]
+    },
+    {
+        "name": "Acrílico",
+        "code": "acrílico",
+        "category_code": "plasticos",
+        "thickness_cutting": [
+            {
+                "id": 45,
+                "value": "2.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 46,
+                "value": "2.50",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 47,
+                "value": "3.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 48,
+                "value": "4.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 49,
+                "value": "5.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 50,
+                "value": "6.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 51,
+                "value": "9.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            }
+        ],
+        "description_text": "También conocido como polimetilmetacrilato, es un material versátil ampliamente utilizado en una variedad de aplicaciones debido a su transparencia, resistencia y facilidad de manipulación. Este material sintético se caracteriza por su aspecto similar al vidrio pero con una resistencia al impacto significativamente mayor.",
+        "about_text": "El acrílico es conocido por su transparencia y claridad, lo que lo convierte en una excelente alternativa al vidrio en aplicaciones donde se requiere una mayor resistencia al impacto. Además, el acrílico es resistente a la intemperie y a los rayos UV, lo que lo hace ideal para aplicaciones en exteriores.",
+        "common_uses_text": "El acrílico se utiliza en una amplia gama de aplicaciones en diseño y arquitectura. Se utiliza comúnmente en la fabricación de letreros, rótulos luminosos, pantallas publicitarias y elementos decorativos debido a su transparencia y facilidad de manipulación. Además, el acrílico se utiliza en la fabricación de muebles, lámparas y accesorios decorativos debido a su versatilidad y estética moderna.",
+        "banner_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/p3rtghnvz9zxte9kevp1",
+        "description_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/p3rtghnvz9zxte9kevp1",
+        "about_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/rq9uwen1z3ya6rsjukq0",
+        "uses_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/cc9rcs7diurrcusgfkyk",
+        "texture_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/xy7tjxef2070s4mchsib",
+        "features_highlights": [
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            }
+        ]
+    },
+    {
+        "name": "Poliestireno",
+        "code": "poliestireno",
+        "category_code": "plasticos",
+        "thickness_cutting": [
+            {
+                "id": 52,
+                "value": "0.80",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 53,
+                "value": "1.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 54,
+                "value": "1.50",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 55,
+                "value": "2.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 56,
+                "value": "2.50",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            },
+            {
+                "id": 57,
+                "value": "3.00",
+                "compatibility_cut": {
+                    "laser_fibra": false,
+                    "laser_co2": true,
+                    "router_cnc": true
+                }
+            }
+        ],
+        "description_text": "Es un material ampliamente utilizado en la industria del plástico debido a su ligereza, aislamiento térmico y versatilidad. Este material termoplástico se caracteriza por su capacidad para ser moldeado en una amplia variedad de formas y su resistencia a la humedad y a los productos químicos.",
+        "about_text": "El poliestireno extruido se produce mediante un proceso de extrusión que implica la expansión y fusión de gránulos de poliestireno con un agente espumante. Esto resulta en una estructura celular cerrada que proporciona sus propiedades de aislamiento térmico y resistencia a la humedad. Es ligero, fácil de cortar y manipular, lo que facilita su instalación en una variedad de aplicaciones de construcción.",
+        "common_uses_text": "El poliestireno se utiliza en una amplia gama de aplicaciones en las industrias del embalaje y la construcción. Se utiliza comúnmente en la fabricación de envases y embalajes debido a su ligereza y capacidad de proteger los productos durante el transporte y almacenamiento. Además, el poliestireno se utiliza en la construcción como material aislante en techos, paredes y suelos debido a su capacidad para reducir la transferencia de calor y frío.",
+        "banner_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/zatgk0ekqc6wamx6x6t1",
+        "description_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/zatgk0ekqc6wamx6x6t1",
+        "about_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/jefvddjom6gevqpnrd85",
+        "uses_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/wgqk6ckwx8l2txegey9n",
+        "texture_image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/mkggodpqrspfdo1cspns",
+        "features_highlights": [
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            },
+            {
+                "title": "Titulo",
+                "image": "https://res.cloudinary.com/da4ulrywk/image/upload/f_auto,q_auto/v1/Pricut/vjifb48uafdub89ducfe"
+            }
+        ]
+    }
+]

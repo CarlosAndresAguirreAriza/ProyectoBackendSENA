@@ -1,0 +1,390 @@
+from apps.authentication.jwt import JWTErrorMessages, AccessToken
+from apps.dashboard.domain.entities import UsesCuts
+from apps.users.domain.constants import ADMIN_ROLE, NATURAL_PERSON_ROLE
+from apps.exceptions import (
+    DatabaseConnectionAPIError,
+    PermissionDeniedAPIError,
+    NotAuthenticatedAPIError,
+    ResourceNotFoundAPIError,
+    JWTAPIError,
+)
+from apps.utils import StaticInfoErrorMessages
+from tests.factories import UserFactory, JWTFactory
+from rest_framework import status
+from django.test import Client
+from django.urls import reverse
+from unittest.mock import Mock, patch
+import pytest
+
+
+# Error messages
+THICKNESS_NOT_FOUND = StaticInfoErrorMessages.THICKNESS_NOT_FOUND.value
+INVALID_OR_EXPIRED = JWTErrorMessages.INVALID_OR_EXPIRED.value
+USER_NOT_FOUND = JWTErrorMessages.USER_NOT_FOUND.value
+BLACKLISTED = JWTErrorMessages.BLACKLISTED.value
+
+
+@pytest.mark.django_db
+class TestDeleteThicknessAPIView:
+    """
+    This class encapsulates the tests for the view responsible for
+    deleting a thickness from the database.
+    """
+
+    path_name = "delete_update_thickness"
+    user_factory = UserFactory
+    jwt_factory = JWTFactory
+
+    @pytest.mark.parametrize(
+        argnames="thickness_id",
+        argvalues=[1, 11],
+        ids=[
+            "material_mdf",
+            "material_triplex",
+        ],
+    )
+    def test_if_delete_thickness(
+        self,
+        thickness_id: int,
+        client: Client,
+        load_static_info,
+        load_user_groups,
+    ) -> None:
+        """
+        This test is responsible for validating the expected behavior of the
+        view when a thickness is deleted.
+        """
+
+        # Creating the JWTs to be used in the test
+        user_factory_obj = self.user_factory.create_user(
+            user_role=ADMIN_ROLE,
+            add_perm=True,
+            save=True,
+        )
+        jwt_factory_obj = self.jwt_factory.create_token(
+            token_type=AccessToken.token_type,
+            user=user_factory_obj.user,
+            save=True,
+        )
+
+        # Simulating the request
+        path = reverse(
+            viewname=self.path_name,
+            kwargs={"thickness_id": thickness_id},
+        )
+        response = client.delete(
+            path=path,
+            HTTP_AUTHORIZATION=f"Bearer {jwt_factory_obj.token}",
+            content_type="application/json",
+        )
+
+        # Asserting that response data is correct
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["modified_thicknesses"] == False
+
+    @pytest.mark.parametrize(
+        argnames="thickness_id",
+        argvalues=[1],
+        ids=["material_mdf"],
+    )
+    def test_if_desactive_cut(
+        self,
+        thickness_id: int,
+        client: Client,
+        load_static_info,
+        load_user_groups,
+    ) -> None:
+        """
+        This test is responsible for validating the expected behavior of the
+        view when a cutting technique is deactivated.
+        """
+
+        # Prepare the appropriate scenario in the database
+        cut_uses = UsesCuts.objects.get(cut__code="laser_co2")
+        cut_uses.number_uses = 1
+        cut_uses.save()
+
+        # Creating the JWTs to be used in the test
+        user_factory_obj = self.user_factory.create_user(
+            user_role=ADMIN_ROLE,
+            add_perm=True,
+            save=True,
+        )
+        jwt_factory_obj = self.jwt_factory.create_token(
+            token_type=AccessToken.token_type,
+            user=user_factory_obj.user,
+            save=True,
+        )
+
+        # Simulating the request
+        path = reverse(
+            viewname=self.path_name,
+            kwargs={"thickness_id": thickness_id},
+        )
+        response = client.delete(
+            path=path,
+            HTTP_AUTHORIZATION=f"Bearer {jwt_factory_obj.token}",
+            content_type="application/json",
+        )
+
+        # Asserting that response data is correct
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["modified_thicknesses"] == True
+
+    @pytest.mark.parametrize(
+        argnames="thickness_id",
+        argvalues=[111],
+        ids=["thickness_not_exists"],
+    )
+    def test_if_not_found_thickness(
+        self,
+        thickness_id: int,
+        client: Client,
+        load_static_info,
+        load_user_groups,
+    ) -> None:
+        """
+        This test is responsible for validating the expected behavior of the
+        view when a thickness is not found.
+        """
+
+        # Creating the JWTs to be used in the test
+        user_factory_obj = self.user_factory.create_user(
+            user_role=ADMIN_ROLE,
+            add_perm=True,
+            save=True,
+        )
+        jwt_factory_obj = self.jwt_factory.create_token(
+            token_type=AccessToken.token_type,
+            user=user_factory_obj.user,
+            save=True,
+        )
+
+        # Simulating the request
+        path = reverse(
+            viewname=self.path_name,
+            kwargs={"thickness_id": thickness_id},
+        )
+        response = client.delete(
+            path=path,
+            HTTP_AUTHORIZATION=f"Bearer {jwt_factory_obj.token}",
+            content_type="application/json",
+        )
+
+        # Asserting that response data is correct
+        status_code_expected = ResourceNotFoundAPIError.status_code
+        code_expected = THICKNESS_NOT_FOUND["code"]
+        message_expected = THICKNESS_NOT_FOUND["detail"]
+
+        assert response.status_code == status_code_expected
+        assert response.data["code"] == code_expected
+        assert response.data["detail"] == message_expected
+
+    def test_if_access_token_not_provided(self, client: Client) -> None:
+        """
+        This test is responsible for validating the expected behavior of the
+        view when the access token was not added in the request header.
+        """
+
+        # Simulating the request
+        path = reverse(viewname=self.path_name, kwargs={"thickness_id": 1})
+        response = client.delete(path=path, content_type="application/json")
+
+        # Asserting that response data is correct
+        status_code_expected = NotAuthenticatedAPIError.status_code
+        code_expected = NotAuthenticatedAPIError.default_code
+        message_expected = NotAuthenticatedAPIError.default_detail
+
+        assert response.status_code == status_code_expected
+        assert response.data["code"] == code_expected
+        assert response.data["detail"] == message_expected
+
+    @pytest.mark.parametrize(
+        argnames="access_token, message_expected",
+        argvalues=[
+            (
+                JWTFactory.create_token(
+                    token_type=AccessToken.token_type,
+                    invalid=True,
+                ).token,
+                INVALID_OR_EXPIRED.format(token_type=AccessToken.token_type),
+            ),
+            (
+                JWTFactory.create_token(
+                    token_type=AccessToken.token_type,
+                    exp=True,
+                ).token,
+                INVALID_OR_EXPIRED.format(token_type=AccessToken.token_type),
+            ),
+        ],
+        ids=[
+            "access_token_invalid",
+            "access_token_expired",
+        ],
+    )
+    def test_if_token_validation_failed(
+        self, access_token: str, message_expected: str, client: Client
+    ) -> None:
+        """
+        This test is responsible for validating the expected behavior of the
+        view when the request access token is invalid.
+        """
+
+        # Simulating the request
+        path = reverse(viewname=self.path_name, kwargs={"thickness_id": 1})
+        response = client.delete(
+            path=path,
+            HTTP_AUTHORIZATION=f"Bearer {access_token}",
+            content_type="application/json",
+        )
+
+        # Asserting that response data is correct
+        status_code_expected = JWTAPIError.status_code
+        code_expected = JWTAPIError.default_code
+
+        assert response.status_code == status_code_expected
+        assert response.data["code"] == code_expected
+        assert response.data["detail"] == message_expected
+
+    def test_if_token_blacklisted(self, client: Client) -> None:
+        """
+        This test is responsible for validating the expected behavior of the
+        view when the request access token is blacklisted.
+        """
+
+        # Creating the JWTs to be used in the test
+        user_factory_obj = self.user_factory.create_user(
+            user_role=ADMIN_ROLE,
+            save=True,
+        )
+        jwt_factory_obj = self.jwt_factory.create_token(
+            token_type=AccessToken.token_type,
+            user=user_factory_obj.user,
+            add_blacklist=True,
+            save=True,
+        )
+
+        # Simulating the request
+        path = reverse(viewname=self.path_name, kwargs={"thickness_id": 1})
+        response = client.delete(
+            path=path,
+            HTTP_AUTHORIZATION=f"Bearer {jwt_factory_obj.token}",
+            content_type="application/json",
+        )
+
+        # Asserting that response data is correct
+        status_code_expected = JWTAPIError.status_code
+        code_expected = JWTAPIError.default_code
+        message_expected = BLACKLISTED.format(token_type=AccessToken.token_type)
+
+        assert response.status_code == status_code_expected
+        assert response.data["code"] == code_expected
+        assert response.data["detail"] == message_expected
+
+    def test_if_user_not_found(self, client: Client) -> None:
+        """
+        This test is responsible for validating the expected behavior of the view
+        when the access token user is not found in the database.
+        """
+
+        # Creating the JWTs to be used in the test
+        user_factory_obj = self.user_factory.create_user(user_role=ADMIN_ROLE)
+        jwt_factory_obj = self.jwt_factory.create_token(
+            token_type=AccessToken.token_type,
+            user=user_factory_obj.user,
+        )
+
+        # Simulating the request
+        path = reverse(viewname=self.path_name, kwargs={"thickness_id": 1})
+        response = client.delete(
+            path=path,
+            HTTP_AUTHORIZATION=f"Bearer {jwt_factory_obj.token}",
+            content_type="application/json",
+        )
+
+        # Asserting that response data is correct
+        assert response.status_code == JWTAPIError.status_code
+        assert response.data["code"] == JWTAPIError.default_code
+        assert response.data["detail"] == USER_NOT_FOUND
+
+    @pytest.mark.parametrize(
+        argnames="user_role, add_perm",
+        argvalues=[(NATURAL_PERSON_ROLE, True), (ADMIN_ROLE, False)],
+        ids=["is_not_admin", "can_not_add_thickness"],
+    )
+    def test_if_user_has_not_permission(
+        self,
+        user_role: str,
+        add_perm: bool,
+        client: Client,
+        load_user_groups,
+    ) -> None:
+        """
+        This test is responsible for validating the expected behavior of the view
+        when the user does not have the necessary role and permissions to perform
+        the action.
+        """
+
+        # Creating the JWTs to be used in the test
+        user_factory_obj = self.user_factory.create_user(
+            user_role=user_role,
+            add_perm=add_perm,
+            save=True,
+        )
+        jwt_factory_obj = self.jwt_factory.create_token(
+            token_type=AccessToken.token_type,
+            user=user_factory_obj.user,
+        )
+
+        # Simulating the request
+        path = reverse(viewname=self.path_name, kwargs={"thickness_id": 1})
+        response = client.delete(
+            path=path,
+            HTTP_AUTHORIZATION=f"Bearer {jwt_factory_obj.token}",
+            content_type="application/json",
+        )
+
+        # Asserting that response data is correct
+        status_code_expected = PermissionDeniedAPIError.status_code
+        response_code_expected = PermissionDeniedAPIError.default_code
+        response_data_expected = PermissionDeniedAPIError.default_detail
+
+        assert response.status_code == status_code_expected
+        assert response.data["code"] == response_code_expected
+        assert response.data["detail"] == response_data_expected
+
+    @patch(
+        target="apps.authentication.jwt.JWTAuthentication.get_user",
+        side_effect=DatabaseConnectionAPIError,
+    )
+    def test_if_conection_db_failed(
+        self, jwt_class_mock: Mock, client: Client
+    ) -> None:
+        """
+        This test is responsible for validating the expected behavior of the
+        view when a DatabaseConnectionAPIError exception is raised.
+        """
+
+        # Creating the user data to be used in the test
+        user_factory_obj = self.user_factory.create_user(user_role=ADMIN_ROLE)
+        jwt_factory_obj = self.jwt_factory.create_token(
+            token_type=AccessToken.token_type,
+            user=user_factory_obj.user,
+        )
+
+        # Simulating the request
+        path = reverse(viewname=self.path_name, kwargs={"thickness_id": 1})
+        response = client.delete(
+            path=path,
+            HTTP_AUTHORIZATION=f"Bearer {jwt_factory_obj.token}",
+            content_type="application/json",
+        )
+
+        # Asserting that response data is correct
+        status_code_expected = DatabaseConnectionAPIError.status_code
+        response_code_expected = DatabaseConnectionAPIError.default_code
+        response_data_expected = DatabaseConnectionAPIError.default_detail
+
+        assert response.status_code == status_code_expected
+        assert response.data["code"] == response_code_expected
+        assert response.data["detail"] == response_data_expected
